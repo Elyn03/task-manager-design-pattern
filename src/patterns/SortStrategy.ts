@@ -1,53 +1,55 @@
-import { ITask } from "./TaskFactory"
+import { ITask } from "./TaskFactory";
 
 interface Strategy {
-    execute(tasks: ITask[]): ITask[]
+  execute(tasks: ITask[]): ITask[];
 }
 
 export class SortStrategy {
-    private strategy: Strategy;
+  private strategy: Strategy;
 
-    setStrategy(strategy: Strategy) {
-        this.strategy = strategy
-    }
+  setStrategy(strategy: Strategy) {
+    this.strategy = strategy;
+  }
 
-    executeStrategy(tasks: ITask[]): ITask[] {
-        return this.strategy.execute(tasks)
-    }
+  executeStrategy(tasks: ITask[]): ITask[] {
+    return this.strategy.execute(tasks);
+  }
 }
 
 export class SortByAsc {
-    tasks: ITask[]
+  tasks: ITask[];
 
-    constructor(tasks: ITask[]) {
-        this.tasks = tasks;
-    }
+  constructor(tasks: ITask[]) {
+    this.tasks = tasks;
+  }
 
-    execute(tasks: ITask[]): ITask[] {
-        return tasks.sort((a, b) => a.title.localeCompare(b.title));
-    }
+  execute(tasks: ITask[]): ITask[] {
+    return tasks.sort((a, b) => a.title.localeCompare(b.title));
+  }
 }
 
 export class SortByDesc {
-    tasks: ITask[]
+  tasks: ITask[];
 
-    constructor(tasks: ITask[]) {
-        this.tasks = tasks;
-    }
+  constructor(tasks: ITask[]) {
+    this.tasks = tasks;
+  }
 
-    execute(tasks: ITask[]): ITask[] {
-        return tasks.sort((a, b) => b.title.localeCompare(a.title));
-    }
+  execute(tasks: ITask[]): ITask[] {
+    return tasks.sort((a, b) => b.title.localeCompare(a.title));
+  }
 }
 
 export class SortByTasksDone {
-    tasks: ITask[]
+  tasks: ITask[];
 
-    constructor(tasks: ITask[]) {
-        this.tasks = tasks;
-    }
+  constructor(tasks: ITask[]) {
+    this.tasks = tasks;
+  }
 
-    execute(tasks: ITask[]): ITask[] {
-        return tasks.filter((task: ITask) => task.isDone);
-    }
+  execute(tasks: ITask[]): ITask[] {
+    console.log("done");
+
+    return tasks.filter((task: ITask) => task.isDone);
+  }
 }

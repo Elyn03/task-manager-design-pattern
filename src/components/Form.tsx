@@ -1,7 +1,13 @@
 import { useState } from "react";
 
-function Form({ addTask }) {
-  const [form, setForm] = useState({ title: "", desc: "", done: false });
+import { AddTask, TaskControl, TaskManager } from "../patterns/TaskManager";
+
+import { TaskFactory } from "../patterns/TaskFactory";
+
+const DEFAULT = { title: "", description: "" };
+
+function Form({ taskManager }: { taskManager: TaskManager }) {
+  const [form, setForm] = useState(DEFAULT);
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
@@ -11,15 +17,16 @@ function Form({ addTask }) {
   const submitNewTask = (e: any) => {
     e.preventDefault();
 
-    if (form.title && form.desc) {
-      addTask({
-        title: form.title,
-        desc: form.desc,
-        done: false,
-      });
+    if (form.title && form.description) {
+      const { title, description } = form;
+      const task = TaskFactory.createTask(title, description);
+      const addTask = new AddTask(taskManager, task);
+      const control = new TaskControl(addTask);
+      control.setCommand(addTask);
+      control.useCommand();
 
       // Reset the form after submission
-      setForm({ title: "", desc: "", done: false });
+      setForm(DEFAULT);
     } else {
       console.log("Please fill out both the title and description.");
     }
@@ -41,13 +48,13 @@ function Form({ addTask }) {
         </div>
 
         <div className="form-label">
-          <label htmlFor="desc">Description</label>
+          <label htmlFor="description">Description</label>
           <input
             type="text"
-            id="desc"
-            name="desc"
+            id="description"
+            name="description"
             placeholder="Enter task description"
-            value={form.desc}
+            value={form.description}
             onChange={handleChange}
           />
         </div>

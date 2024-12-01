@@ -1,82 +1,100 @@
-import { useState } from 'react'
-import './App.css'
-import Form from './components/Form'
-import Task from './components/Task'
-import { SortStrategy, SortByAsc, SortByTasksDone, SortByDesc } from './patterns/SortStrategy'
-// import { AddTask, TaskControl, TaskManager } from "./patterns/TaskManager"
-import { ITask } from './patterns/TaskFactory'
+import { useEffect, useState } from "react";
+import "./App.css";
+import Form from "./components/Form";
+import Task from "./components/Task";
+import Notification from "./components/Notification";
+
+import {
+  SortStrategy,
+  SortByAsc,
+  SortByTasksDone,
+  SortByDesc,
+} from "./patterns/SortStrategy";
+
+import { ITask } from "./patterns/TaskFactory";
+
+import { TaskManager } from "./patterns/TaskManager";
+import { ConcreteObserver, TaskSubject } from "./patterns/NotificationSystem";
+
+const allTasks: ITask[] = [
+  {
+    id: "8a6e0804-2bd0-4672-b79d-d97027f9071a",
+    title: "Party Setup",
+    description: "Decide who will buy what",
+    isDone: false,
+  },
+  {
+    id: "8a6e0804-4672-b79d-2bd0-d97027f9071b",
+    title: "Guest List",
+    description: "Decide who to invite and confirm their attendance",
+    isDone: true,
+  },
+  {
+    id: "8a6e0804-2bd0-4672-b79d-d97027f9071c",
+    title: "Shopping List",
+    description: "Buy raclette cheese, meats, drinks, potatoes",
+    isDone: false,
+  },
+];
 
 function App() {
+  const [sorting, setSorting] = useState("all");
+  const [sorted, setSorted] = useState(allTasks);
+  const [tasks, setTasks] = useState(allTasks);
+  const [notification, setNotification] = useState<string>("");
+  const taskSubject = new TaskSubject(setNotification);
 
-  
-  let allTasks: ITask[] = [
-    {
-      id: "8a6e0804-2bd0-4672-b79d-d97027f9071a",
-      title: "Party Setup",
-      description: "Decide who will buy what",
-      isDone: false
-    },
-    {
-      id: "8a6e0804-4672-b79d-2bd0-d97027f9071a",
-      title: "Guest List",
-      description: "Decide who to invite and confirm their attendance",
-      isDone: true
-    },
-    {
-      id: "8a6e0804-2bd0-4672-b79d-d97027f9071a",
-      title: "Shopping List",
-      description: "Buy raclette cheese, meats, drinks, potatoes",
-      isDone: false
-    }    
-  ]
+  const taskManager = new TaskManager(setTasks, taskSubject);
 
-  const [allTasksSorted, setAllTasksSorted] = useState(allTasks)
+  const addObserver = new ConcreteObserver();
+  const deleteObserver = new ConcreteObserver();
+  const doneObserver = new ConcreteObserver();
 
-  const addTask = (e: any) => {
-    console.log(e);
-  
-    // const manager = new TaskManager(e)
-    // const add = new AddTask(manager)
-     
-    // const control = new TaskControl(add)
-    // control.setTask(add)
-    // control.pressAdd()
-  }
+  taskSubject.attach(addObserver);
+  taskSubject.attach(deleteObserver);
+  taskSubject.attach(doneObserver);
+
+  useEffect(() => {
+    sort(sorting);
+  }, [tasks]);
 
   const sort = (type: string) => {
     const context = new SortStrategy();
+    setSorting(type);
 
     switch (type) {
       case "all":
-        setAllTasksSorted(allTasks)        
-        break
+        setSorted(tasks);
+
+        break;
       case "ascending":
-        context.setStrategy(new SortByAsc(allTasks));
-        const sortedAscTasks = context.executeStrategy(allTasks);
-        setAllTasksSorted(sortedAscTasks)        
-        break
+        context.setStrategy(new SortByAsc(tasks));
+        const sortedAscTasks = context.executeStrategy(tasks);
+        setSorted(sortedAscTasks);
+        break;
       case "descending":
-        context.setStrategy(new SortByDesc(allTasks));
-        const sortedDescTasks = context.executeStrategy(allTasks);
-        setAllTasksSorted(sortedDescTasks)        
-        break
+        context.setStrategy(new SortByDesc(tasks));
+        const sortedDescTasks = context.executeStrategy(tasks);
+        setSorted(sortedDescTasks);
+
+        break;
       case "done":
-        context.setStrategy(new SortByTasksDone(allTasks));
-        const doneTasks = context.executeStrategy(allTasks);
-        setAllTasksSorted(doneTasks)
-        break
+        context.setStrategy(new SortByTasksDone(tasks));
+        const doneTasks = context.executeStrategy(tasks);
+
+        setSorted(doneTasks);
+
+        break;
       default:
         throw new Error("Invalid content type");
     }
-  }
+  };
 
   return (
     <>
       <div className="form-container">
         <h2>Create a task</h2>
-        <Form 
-          addTask={addTask}
-        />
+        <Form taskManager={taskManager} />
       </div>
       <div className="tasks-container">
         <h2>All tasks</h2>
@@ -88,22 +106,14 @@ function App() {
           <button onClick={() => sort("done")}>Done</button>
         </div>
         <div className="tasks-list">
-          {
-            allTasksSorted.map((task) => {
-              return (
-                <Task
-                  id={task.id}
-                  title={task.title}
-                  description={task.description}
-                  isDone={task.isDone}
-                  />
-              )
-            })
-          }
+          {sorted.map((task) => {
+            return <Task key={task.id} {...task} taskManager={taskManager} />;
+          })}
         </div>
       </div>
+      <Notification message={notification} setMessage={setNotification} />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

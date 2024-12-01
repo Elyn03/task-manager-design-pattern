@@ -1,33 +1,41 @@
-interface Notification {
-    update(state: string): void
+import { SetStateAction } from "react";
+
+interface Observer {
+  update(state: string): void;
 }
 
-class TaskSubject {
-    private notifications: Notification[] = []
-    private state: string = ""
+export class TaskSubject {
+  private observers: Observer[] = [];
+  private state: string = "";
+  setNotification: (action: SetStateAction<string>) => void;
 
-    attach(notification: Notification): void {
-        this.notifications.push(notification)
-    }
+  constructor(setNotification: (action: SetStateAction<string>) => void) {
+    this.setNotification = setNotification;
+  }
 
-    detach(notification: Notification): void {
-        this.notifications = this.notifications.filter((n) => n !== notification)
-    }
+  attach(observer: Observer): void {
+    this.observers.push(observer);
+  }
 
-    notify(): void {
-        for (const notification of this.notifications) {
-            notification.update(this.state)
-        }
-    }
+  detach(observer: Observer): void {
+    this.observers = this.observers.filter((n) => n !== observer);
+  }
 
-    setState(state: string): void {
-        this.state = state
-        this.notify()
+  notify(): void {
+    for (const notification of this.observers) {
+      notification.update(this.state);
     }
+  }
+
+  setState(state: string): void {
+    this.setNotification(state);
+    this.state = state;
+    this.notify();
+  }
 }
 
-class ConcretNotification implements Notification {
-    update(state: string): void {
-        console.log("notification task done", state);   
-    }
+export class ConcreteObserver implements Observer {
+  update(state: string): void {
+    console.log("notification task done", state);
+  }
 }

@@ -1,87 +1,104 @@
-export interface ITask {
-    execute(): void;
+import { SetStateAction } from "react";
+import { ITask } from "./TaskFactory";
+import { TaskSubject } from "./NotificationSystem";
+
+interface Command {
+  execute(): void;
+}
+export class TaskManager {
+  setTasks: (action: SetStateAction<ITask[]>) => void;
+  taskSubject: TaskSubject;
+
+  constructor(
+    setTasks: (action: SetStateAction<ITask[]>) => void,
+    taskSubject: TaskSubject
+  ) {
+    this.setTasks = setTasks;
+    this.taskSubject = taskSubject;
   }
 
-interface Task {
-    
+  addTask = (item: ITask) => {
+    const { title } = item;
+    console.log(item);
+
+    this.setTasks((prevTasks: ITask[]) => [...prevTasks, item]);
+    this.taskSubject.setState(`Task added: ${title}`);
+  };
+
+  deleteTask = (item: ITask) => {
+    const { title } = item;
+    this.setTasks((prevTasks: ITask[]) =>
+      prevTasks.filter(({ id }) => id !== item.id)
+    );
+    this.taskSubject.setState(`Task deleted: ${title}`);
+  };
+
+  markAsDone(item: ITask) {
+    const { title } = item;
+    this.setTasks((prevTasks: ITask[]) =>
+      prevTasks.map(({ id, ...task }) =>
+        id === item.id ? { id, ...task, isDone: true } : { id, ...task }
+      )
+    );
+    this.taskSubject.setState(`Task mark as done: ${title}`);
+  }
 }
 
-export class TaskManager {
-    title: string
-    description: string
-    done: boolean
+export class AddTask implements Command {
+  private taskManager: TaskManager;
+  private task: ITask;
 
-    constructor(task: any) {
-        this.title = task.title
-        this.description = task.description
-        this.done = task.done
-    }
+  constructor(taskManager: TaskManager, task: ITask) {
+    this.taskManager = taskManager;
+    this.task = task;
+  }
 
-    addTask() {
-        console.log("hehehe");
-        // setTasks((prevTask) => ([ ...prevTask, e ]))
-    }
-
-    deleteTask() {
-        console.log("delete");
-    }
-
-    markAsDone() {
-        console.log("mark as done");
-    }
+  execute(): void {
+    this.taskManager.addTask(this.task);
+  }
 }
 
-export class AddTask implements Task {
-    private taskManager: TaskManager;
+export class DeleteTask implements Command {
+  private taskManager: TaskManager;
+  private task: ITask;
 
-    constructor(taskManager: TaskManager) {
-        this.taskManager = taskManager
-    }
+  constructor(taskManager: TaskManager, task: ITask) {
+    this.taskManager = taskManager;
+    this.task = task;
+  }
 
-    execute(): void {
-        this.taskManager.addTask();
-    }
-
+  execute(): void {
+    this.taskManager.deleteTask(this.task);
+  }
 }
 
-export class DeleteTask implements Task {
-    private taskManager: TaskManager;
+export class MarkAsDone implements Command {
+  private taskManager: TaskManager;
+  private task: ITask;
 
-    constructor(taskManager: TaskManager) {
-        this.taskManager = taskManager
-    }
+  constructor(taskManager: TaskManager, task: ITask) {
+    this.taskManager = taskManager;
+    this.task = task;
+  }
 
-    execute(): void {
-        this.taskManager.deleteTask();
-    }
-
-}
-
-export class MarkAsDone implements Task {
-    private taskManager: TaskManager;
-
-    constructor(taskManager: TaskManager) {
-        this.taskManager = taskManager
-    }
-
-    execute(): void {
-        this.taskManager.markAsDone();
-    }
+  execute(): void {
+    this.taskManager.markAsDone(this.task);
+  }
 }
 
 // Invoker
 export class TaskControl {
-    private task: Task;
+  private command: Command;
 
-    constructor(task: Task) {
-        this.task = task
-    }
+  constructor(command: Command) {
+    this.command = command;
+  }
 
-    setTask(task: Task): void {
-        this.task = task
-    }
+  setCommand(command: Command): void {
+    this.command = command;
+  }
 
-    pressAdd(): void {
-        this.task.execute()
-    }
+  useCommand(): void {
+    this.command.execute();
+  }
 }
