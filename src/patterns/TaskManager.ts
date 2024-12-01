@@ -1,5 +1,9 @@
-interface Task {
+export interface ITask {
     execute(): void;
+  }
+
+interface Task {
+    
 }
 
 export class TaskManager {
