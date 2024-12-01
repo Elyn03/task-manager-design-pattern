@@ -1,50 +1,33 @@
-# React + TypeScript + Vite
+# Task Manager Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This project is a collaborative task management application. It demonstrates the implementation of design patterns: Command, Factory, Observer, and Strategy, in a practical use case. The application allows users to manage tasks dynamically with features such as task creation, notifications, and sorting.
 
-Currently, two official plugins are available:
+## Features
+1. Create Tasks:
+- Navigate to the task creation form.
+- Enter the task title and description, then submit the form to add a new task.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. View and Manage Tasks:
+- View all created tasks in the task list.
+- Mark tasks as complete or delete them.
 
-## Expanding the ESLint configuration
+3. Sort Tasks:
+- Use the sorting options to rearrange the task list dynamically based on your chosen criteria.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+4. Receive Notifications:
+- Whenever you create, update, or delete a task, a notification will appear.
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Installation
+1. Install Dependencies
+```
+npm install
+```
+2. Run the Application
+```
+npm run dev
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Authors
+- Eap Céline - celine-chhun-huy.eap@edu.devinci.fr
+- Le Lez Héloïse - heloise.le_lez@edu.devinci.fr
