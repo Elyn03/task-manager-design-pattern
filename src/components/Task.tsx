@@ -1,25 +1,33 @@
-import { useState } from 'react'
+import { ITask } from "../patterns/TaskFactory"
 
-function Task({ title, desc, done }) {
+function Task({ id, title, description, isDone }: ITask) {
 
   return (
-    <div key={title} className="single-task">
+    <div key={id} className={isDone ? "single-task task-done" : "single-task"}>
       <div style={{ width: "100%", textAlign: "left"}}>
         {title}
       </div>
 
       <div className="task-details">
         <div>
-          {desc}
+          {description}
         </div>
-        <div className="task-buttons">
-          <button style={{ borderRadius: 100, backgroundColor: "#23AC0D" }}>
-            Mark as done
-          </button>
-          <button style={{ borderRadius: 100, backgroundColor: "#AC0D0D" }}>
-            delete
-          </button>
-        </div>
+        { !isDone ?
+          <div className="task-buttons">
+            <button style={{ backgroundColor: "#23AC0D" }}>
+              mark as done
+            </button>
+            <button style={{ backgroundColor: "#AC0D0D" }}>
+              delete
+            </button>
+          </div>
+          : 
+          <div className="task-done-button">
+            <button style={{ backgroundColor: "#FFC43D" }}>
+              done
+            </button>
+          </div>
+        }
       </div>
 
     </div>

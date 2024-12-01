@@ -1,26 +1,30 @@
-import { useState } from 'react'
 import './App.css'
 import Form from './components/Form'
 import Task from './components/Task'
-import { AddTask, TaskControl, TaskManager } from "./patterns/TaskManager"
+import { SortStategy, SortByAsc, SortByTasksDone } from './patterns/SortStrategy'
+// import { AddTask, TaskControl, TaskManager } from "./patterns/TaskManager"
+import { ITask } from './patterns/TaskFactory'
 
 function App() {
-  const [tasks, setTasks] = useState([
+
+  let allTasks: ITask[] = [
     {
-      title: "Test",
-      desc: "TestTestTestTest",
-      done: false
+      id: "8a6e0804-2bd0-4672-b79d-d97027f9071a",
+      title: "Courses",
+      description: "Acheter des patates et du fromage raclette",
+      isDone: false
     },
     {
-      title: "Test",
-      desc: "TestTestTestTest",
-      done: false
+      id: "8a6e0804-4672-b79d-2bd0-d97027f9071a",
+      title: "Messages",
+      description: "Inviter des amis pour une raclette party",
+      isDone: true
     }
-  ])
+  ]
 
-  const addTask = (e) => {
+  const addTask = (e: any) => {
     console.log(e);
-    
+  
     // const manager = new TaskManager(e)
     // const add = new AddTask(manager)
      
@@ -28,6 +32,7 @@ function App() {
     // control.setTask(add)
     // control.pressAdd()
   }
+
 
 
   return (
@@ -42,12 +47,13 @@ function App() {
         <h2>All tasks</h2>
         <div className="tasks-list">
           {
-            tasks.map((task) => {
+            allTasks.map((task) => {
               return (
                 <Task
+                  id={task.id}
                   title={task.title}
-                  desc={task.desc}
-                  done={task.done}
+                  description={task.description}
+                  isDone={task.isDone}
                   />
               )
             })

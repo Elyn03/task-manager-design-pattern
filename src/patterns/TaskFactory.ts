@@ -1,5 +1,19 @@
-interface Task {
-    title: string,
-    description: string,
-    done: boolean
+import {v4 as uuidv4} from 'uuid';
+
+export interface ITask {
+    id: string;
+    title: string;
+    description: string;
+    isDone: boolean;
+}
+
+export class TaskFactory {
+    createTask(title: string, description: string): ITask {
+        return {
+            id: uuidv4(),
+            title: title,
+            description: description,
+            isDone: false,
+        }
+    }
 }

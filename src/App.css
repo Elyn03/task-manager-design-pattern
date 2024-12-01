@@ -55,6 +55,12 @@
   gap: 18px;
 }
 
+.sort-container {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
 .tasks-list{
   display: flex;
   flex-direction: column;
@@ -73,13 +79,33 @@
   border-radius: 8px;
 }
 
+.task-done {
+  opacity: 0.5;
+}
+
 .task-details {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
+.task-details button {
+  border-radius: 100px;
+}
+
 .task-buttons {
   display: flex;
   gap: 12px;
+}
+
+.task-done-button button {
+  pointer-events: none;
+}
+
+.task-done-button button:focus {
+  outline: none;
+  border: none;
+}
+.task-done-button button:hover {
+  border: none;
 }
